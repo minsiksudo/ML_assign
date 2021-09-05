@@ -1,41 +1,61 @@
+---
+title: "markdown"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
 #git url
 #https://github.com/minsiksudo/ML_assign.git
 
 #Git upload update
 #Machine Learning course_Coursea
-
+  
+```{r}
 rm(list=ls())
 library(lattice)
 library(ggplot2)
 library(caret)
 library(rpart)
-
+```
+  
 ##Loading the dataset
-
+  
+```{r}
 testset<-read.csv("/Users/MK1059/Downloads/pml-testing.csv")
 trainset<-read.csv("/Users/MK1059/Downloads/pml-training.csv")
-
+```
+  
 #subsetting data into test and train
-
+  
+```{R}
 set.seed(1)
 inTrain <- createDataPartition(trainset$classe, p = 0.7, list = FALSE)
 Train <- trainset[inTrain,]
 Test <- trainset[-inTrain,]
-
+```
+  
 #Making a model with recursive partitioning.
-
+  
+```{r}
 fit1 <- rpart(classe ~ num_window, data=Train, method = "class", cp = 0.0025)
+```
 
+```{r}
 #The predictin of model is
 predict(fit1, testset, type = "class")
 test_rpart <- predict(fit1, Test, type = "class")
 conf_result <- confusionMatrix(as.factor(Test$classe), test_rpart)
 conf_result$table
-
+```
+  
 #The prediction result is great. 
 
 #Using Random forest,
-
+  
+```{r}
 rf_model<-train(user_name ~ magnet_arm_x + 
                   magnet_arm_y + 
                   magnet_arm_z + 
@@ -49,12 +69,11 @@ rf_model<-train(user_name ~ magnet_arm_x +
                   magnet_forearm_y + 
                   magnet_forearm_z, 
                 data = Train, method = "rf", ntree = 20)
-
 rf_predict <- predict(rf_model, Test)
-
 conf <- confusionMatrix(rf_predict, as.factor(Test$user_name))
 conf$table
-
+```
+  
 #Using RF, the users were distionguishable.
 
 
